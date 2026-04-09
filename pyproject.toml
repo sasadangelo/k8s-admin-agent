@@ -24,7 +24,7 @@ dependencies = [
 line-length = 120
 
 [project.scripts]
-server = "src.k8s_admin_agent.agent:serve"
+server = "k8s_admin_agent.agent:serve"
 
 [tool.pyrefly]
 project-includes = [

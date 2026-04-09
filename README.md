@@ -122,12 +122,12 @@ agentstack add https://github.com/your-org/k8s-admin-agent.git
 
 3. **Configure environment variables:**
 
-The agent uses these environment variables (configured in [`agentstack.json`](agentstack.json)):
+The agent uses these environment variables:
 - `MCP_SERVER_URL`: URL of your Kubernetes MCP Server (default: http://k8s-mcp-server:8080)
 - `HOST`: Server host (default: 0.0.0.0)
 - `PORT`: Server port (default: 8000)
 
-To customize, edit [`agentstack.json`](agentstack.json) before deployment or update the ConfigMap in [`k8s-deployment.yaml`](k8s-deployment.yaml) if deploying manually.
+To customize, update the ConfigMap in [`k8s-deployment.yaml`](k8s-deployment.yaml) if deploying manually.
 
 #### Verify Deployment
 
