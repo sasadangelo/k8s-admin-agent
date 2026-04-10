@@ -237,35 +237,84 @@ agentstack agent register --url http://k8s-admin-agent:8000
 
 ## Example Interactions
 
-### List Pods
+> 📖 **For detailed usage examples and best practices, see [docs/USAGE.md](docs/USAGE.md)**
+
+### Quick Examples
+
+#### List Namespaces
+```
+User: Lista tutti i namespace
+Agent: Ecco tutti i namespace nel cluster:
+       - default (Active, 38d)
+       - kube-system (Active, 38d)
+       - production (Active, 30d)
+       ...
+```
+
+#### List Pods
 ```
 User: List all pods in the default namespace
 Agent: I'll list the pods for you...
-[Shows pod list with status, age, and resource usage]
+
+       NAME                          READY   STATUS    RESTARTS   AGE
+       nginx-deployment-abc123       1/1     Running   0          2d
+       api-server-xyz789             1/1     Running   1          5d
 ```
 
-### Scale Deployment
+#### Scale Deployment
 ```
 User: Scale the nginx deployment to 5 replicas
-Agent: I'll scale the nginx deployment to 5 replicas. This will increase
-       the number of running pods. Shall I proceed?
+Agent: Current state: nginx deployment has 3 replicas.
+       I'll scale it to 5 replicas. This will increase the number
+       of running pods. Shall I proceed?
 User: Yes
-Agent: Successfully scaled nginx deployment to 5 replicas.
+Agent: ✓ Successfully scaled nginx deployment to 5 replicas.
+       New state: 5/5 replicas ready.
 ```
 
-### View Logs
+#### View Logs
 ```
 User: Show me the logs from the api-server pod
-Agent: I'll retrieve the logs from the api-server pod...
-[Displays recent log entries]
+Agent: Retrieving logs from api-server-xyz789...
+
+       [2024-01-10 10:30:15] INFO: Server started on port 8080
+       [2024-01-10 10:30:16] INFO: Connected to database
+       [2024-01-10 10:30:20] ERROR: Failed to process request...
 ```
 
-### Troubleshoot Issues
+#### Troubleshoot Issues
 ```
 User: What pods are failing in production?
-Agent: Let me check the production namespace for failing pods...
-[Analyzes pod statuses and provides diagnostic information]
+Agent: Analyzing production namespace...
+
+       Found 2 pods with issues:
+
+       1. api-server-abc123 (CrashLoopBackOff)
+          - Restarts: 5
+          - Last error: OOMKilled
+          - Suggestion: Increase memory limits
+
+       2. worker-xyz789 (ImagePullBackOff)
+          - Error: Failed to pull image
+          - Suggestion: Check image name and registry access
 ```
+
+### Supported Operations
+
+The agent supports these main operations:
+
+| Operation        | Resources                                          | Example                             |
+| ---------------- | -------------------------------------------------- | ----------------------------------- |
+| **List**         | Namespaces, Pods, Deployments, ConfigMaps, Secrets | "Lista i pod nel namespace default" |
+| **Get/Describe** | All resources                                      | "Descrivi il pod nginx-xyz"         |
+| **Logs**         | Pods                                               | "Mostra i log del pod api-server"   |
+| **Scale**        | Deployments                                        | "Scala il deployment a 5 repliche"  |
+| **Delete**       | All resources                                      | "Elimina il pod test-xyz"           |
+| **Restart**      | Pods                                               | "Riavvia il pod nginx-abc"          |
+
+> 💡 **Tip**: The agent understands both English and Italian commands!
+>
+> For comprehensive examples and advanced usage, see [docs/USAGE.md](docs/USAGE.md)
 
 ## Configuration
 
