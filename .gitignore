@@ -1,5 +1,5 @@
 # Python cache files
-__pycache__/
+**/__pycache__/**
 *.py[cod]
 *$py.class
 *.so
@@ -9,7 +9,7 @@ __pycache__/
 venv/
 ENV/
 
-# AgentStack directories
+# AgentStack docs directories
 agentstack
 agentstack-docs
 beeai-framework-docs
