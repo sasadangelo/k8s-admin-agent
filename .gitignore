@@ -1,1 +1,20 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+
+# AgentStack directories
 agentstack
+agentstack-docs
+beeai-framework-docs
+
+# Test scripts (temporary)
+fix-agent-registration.sh
+test-agent.sh
+test-mcp-server.py

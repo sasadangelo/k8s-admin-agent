@@ -77,19 +77,89 @@ export PORT="8000"
 
 ## Usage
 
-### Running Locally
+### Testing Locally with AgentStack
 
+Before deploying to Kubernetes, you can test the agent locally with AgentStack platform:
+
+#### Prerequisites
+1. **AgentStack platform running locally:**
+   ```bash
+   agentstack platform start
+   ```
+
+2. **Kubernetes MCP Server accessible via port-forward:**
+   ```bash
+   kubectl port-forward svc/k8s-mcp-server 8080:8080
+   ```
+
+3. **Configure `/etc/hosts` (required for macOS/Linux):**
+   Add this line to `/etc/hosts`:
+   ```
+   127.0.0.1 host.docker.internal
+   ```
+   This allows AgentStack to resolve `host.docker.internal` to localhost.
+
+#### Quick Start
+Use the provided test script:
 ```bash
+./test-local.sh
+```
+
+This script will:
+- Check if AgentStack platform is running (localhost:8333)
+- Verify K8s MCP Server accessibility (localhost:8080)
+- Set environment variables for local testing
+- Install dependencies if needed
+- Start the agent server with auto-registration
+
+#### Manual Testing
+Alternatively, run manually:
+```bash
+# Set environment variables
+export MCP_SERVER_URL="http://localhost:8080"
+export HOST="127.0.0.1"
+export PORT="8000"
+export PLATFORM_AUTH__PUBLIC_URL="http://127.0.0.1:8000"
+
+# Install dependencies
+uv sync
+
+# Run the server
 uv run server
 ```
 
-### Running with Docker
+The agent will automatically register with AgentStack platform. Access the UI at **http://localhost:8334** to interact with your agent.
 
+#### Testing with AgentStack CLI
+Once the agent is running, you can test it via CLI:
 ```bash
-docker build -t k8s-admin-agent .
+# List registered agents
+agentstack agent list
+
+# Run the agent
+agentstack run k8s-admin-agent "List all pods in default namespace"
+```
+
+### Running with Docker (Local Testing)
+
+For local testing with Docker:
+```bash
+# Build the image
+docker build -t k8s-admin-agent:latest .
+
+# Run with localhost MCP Server (use host.docker.internal on Mac/Windows)
 docker run -p 8000:8000 \
-  -e MCP_SERVER_URL="http://k8s-mcp-server:8080" \
-  k8s-admin-agent
+  -e MCP_SERVER_URL="http://host.docker.internal:8080" \
+  -e HOST="0.0.0.0" \
+  -e PORT="8000" \
+  k8s-admin-agent:latest
+```
+
+**Note:** On Linux, use `--network host` instead:
+```bash
+docker run --network host \
+  -e MCP_SERVER_URL="http://localhost:8080" \
+  k8s-admin-agent:latest
 ```
 
 ### Deploying to AgentStack on Minikube

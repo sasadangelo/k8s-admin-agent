@@ -42,7 +42,10 @@ from beeai_framework.agents.requirement.events import (
     RequirementAgentSuccessEvent,
 )
 from beeai_framework.agents.requirement.utils._tool import FinalAnswerTool
-from beeai_framework.backend import AssistantMessage, ChatModelParameters
+from beeai_framework.backend import (
+    AssistantMessage,
+    ChatModelParameters,
+)
 from beeai_framework.errors import FrameworkError
 from beeai_framework.middleware.trajectory import GlobalTrajectoryMiddleware
 from beeai_framework.tools import AnyTool, Tool
@@ -140,12 +143,9 @@ async def k8s_admin(
         title="Starting", content="Received your Kubernetes request"
     )
 
-    # Load conversation history
-    history = [
-        message
-        async for message in context.load_history()
-        if isinstance(message, Message) and message.parts
-    ]
+    # Initialize with empty history to avoid meta attribute issues
+    # The current message is already stored in context
+    history = []
 
     # Initialize LLM
     llm = AgentStackChatModel(parameters=ChatModelParameters(stream=True))
@@ -179,7 +179,32 @@ async def k8s_admin(
 
         ## Tool Usage
         Use the kubernetes_mcp tool to execute Kubernetes operations.
-        Specify the tool_name (e.g., "k8s_list_pods") and required arguments.
+
+        Available tools (specify in tool_name parameter):
+        - pods_list: List all pods across all namespaces
+        - pods_list_in_namespace: List pods in a specific namespace
+        - pods_get: Get details of a specific pod
+        - pods_delete: Delete a pod
+        - pods_log: Get logs from a pod
+        - pods_exec: Execute command in a pod
+        - pods_run: Run a new pod
+        - pods_top: Get resource usage of pods
+        - namespaces_list: List all namespaces
+        - nodes_top: Get resource usage of nodes
+        - nodes_stats_summary: Get detailed node statistics
+        - nodes_log: Get logs from a node
+        - events_list: List cluster events
+        - resources_list: List any Kubernetes resource type
+        - resources_get: Get a specific resource
+        - resources_create_or_update: Create or update a resource
+        - resources_delete: Delete a resource
+        - resources_scale: Scale a resource
+        - configuration_view: View current kubeconfig
+
+        Example usage:
+        - To list pods: tool_name="pods_list", arguments={}
+        - To list pods in namespace: tool_name="pods_list_in_namespace", arguments={"namespace": "default"}
+        - To get pod logs: tool_name="pods_log", arguments={"name": "pod-name", "namespace": "default"}
 
         ## Response Quality
         - Provide complete, well-structured answers
