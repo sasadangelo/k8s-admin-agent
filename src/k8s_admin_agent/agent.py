@@ -63,7 +63,7 @@ logger = logging.getLogger(__name__)
 server = Server()
 
 
-@server.agent(
+@server.agent(  # type: ignore[call-arg]
     name="Kubernetes Admin",
     documentation_url="https://github.com/your-org/k8s-admin-agent",
     version="1.0.0",
