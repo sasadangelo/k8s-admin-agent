@@ -14,7 +14,6 @@ agentstack
 agentstack-docs
 beeai-framework-docs
 
-# Test scripts (temporary)
-fix-agent-registration.sh
+# Temporary test scripts
 test-agent.sh
 test-mcp-server.py
