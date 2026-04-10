@@ -57,15 +57,22 @@ class K8sMCPTool(Tool[K8sMCPToolInput, ToolRunOptions, K8sMCPToolOutput]):
     Supports SSE transport and automatic session management.
     """
 
-    name: str = "kubernetes_mcp"
-    description: str = (
-        "Execute Kubernetes operations via MCP Server. "
-        "This tool provides access to all Kubernetes management "
-        "capabilities including: listing resources (pods, deployments, "
-        "services, etc.), scaling deployments, getting logs, applying "
-        "manifests, and more. Specify the tool_name and arguments to "
-        "execute the desired Kubernetes operation."
-    )
+    @property
+    def name(self) -> str:
+        """Tool name"""
+        return "kubernetes_mcp"
+
+    @property
+    def description(self) -> str:
+        """Tool description"""
+        return (
+            "Execute Kubernetes operations via MCP Server. "
+            "This tool provides access to all Kubernetes management "
+            "capabilities including: listing resources (pods, deployments, "
+            "services, etc.), scaling deployments, getting logs, applying "
+            "manifests, and more. Specify the tool_name and arguments to "
+            "execute the desired Kubernetes operation."
+        )
 
     def __init__(self, mcp_url: str = "http://k8s-mcp-server:8080"):
         """
