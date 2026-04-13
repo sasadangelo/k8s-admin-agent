@@ -148,11 +148,7 @@ For local testing with Docker:
 docker build -t k8s-admin-agent:latest .
 
 # Run with localhost MCP Server (use host.docker.internal on Mac/Windows)
-docker run -p 8000:8000 \
-  -e MCP_SERVER_URL="http://host.docker.internal:8080" \
-  -e HOST="0.0.0.0" \
-  -e PORT="8000" \
-  k8s-admin-agent:latest
+docker run -d --name k8s-mcp-server -p 8080:8080 -v "$(pwd)/kubeconfig-rome-team.yaml":/app/.kube/config:ro \ kubernetes-mcp-server:local --kubeconfig /app/.kube/config --port 8080 --stateless
 ```
 
 **Note:** On Linux, use `--network host` instead:

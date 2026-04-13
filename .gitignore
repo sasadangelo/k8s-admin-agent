@@ -19,3 +19,11 @@ beeai-framework-docs
 *.pyc
 htmlcov/
 .coverage
+
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+.env.local

@@ -1,0 +1,34 @@
+# K8s Admin Agent Configuration
+# Non-secret configuration - secrets go in .env file
+
+server:
+  # Change host based on your network:
+  # - Home Network: Use your home IP (e.g., 192.168.1.16)
+  # - IBM Network: Use your IBM IP (e.g., 9.150.161.51)
+  # - Local only: Use 127.0.0.1 or localhost
+  # host: "192.168.1.16" # Home Network
+  host: "9.150.161.51" # IBM Network (uncomment when at work)
+  port: 8000
+
+# MCP Servers Configuration
+# Support for multiple MCP servers
+mcp:
+  kubernetes_mcp:
+    url: "http://9.150.161.51:8080"
+    description: "Kubernetes MCP Server for cluster operations"
+  # Add more MCP servers as needed
+  # another_mcp:
+  #   url: "http://another-mcp:8080"
+  #   description: "Another MCP Server"
+
+# Logging Configuration
+logs:
+  level: "DEBUG"
+  rotation: "10 MB"
+  retention: "7 days"
+  compression: "zip"
+  console: true
+  file: "logs/agent.log"
+  masking: true
+
+# Made with Bob

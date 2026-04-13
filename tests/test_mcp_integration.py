@@ -9,11 +9,12 @@ import pytest
 import httpx
 import json
 import re
-import os
+
+from k8s_admin_agent.core import config
 
 
-# Skip these tests if MCP_SERVER_URL is not set or server is not available
-MCP_URL = os.getenv("MCP_SERVER_URL", "http://localhost:8080")
+# Use MCP URL from config
+MCP_URL = config.mcp.get_server_url("kubernetes_mcp")
 
 
 def parse_sse_response(text: str) -> dict:
@@ -176,9 +177,7 @@ async def test_invalid_tool_name(mcp_client):
     assert response.status_code == 200
     result = parse_sse_response(response.text)
     # Should return an error
-    assert "error" in result or (
-        "result" in result and "error" in str(result["result"])
-    )
+    assert "error" in result or ("result" in result and "error" in str(result["result"]))
 
 
 # Made with Bob

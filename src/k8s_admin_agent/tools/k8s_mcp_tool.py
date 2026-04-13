@@ -26,9 +26,7 @@ class K8sMCPToolInput(BaseModel):
     """Input for Kubernetes MCP tool calls"""
 
     tool_name: str = Field(description="Name of the Kubernetes tool to execute")
-    arguments: dict[str, Any] = Field(
-        default_factory=dict, description="Arguments for the tool"
-    )
+    arguments: dict[str, Any] = Field(default_factory=dict, description="Arguments for the tool")
 
 
 class K8sMCPToolResult(BaseModel):
@@ -36,9 +34,7 @@ class K8sMCPToolResult(BaseModel):
 
     result: Any = Field(description="Result from the tool execution")
     success: bool = Field(description="Whether the tool execution was successful")
-    error: Optional[str] = Field(
-        default=None, description="Error message if execution failed"
-    )
+    error: Optional[str] = Field(default=None, description="Error message if execution failed")
 
 
 class K8sMCPToolOutput(JSONToolOutput[K8sMCPToolResult]):
@@ -86,6 +82,7 @@ class K8sMCPTool(Tool[K8sMCPToolInput, ToolRunOptions, K8sMCPToolOutput]):
         self._client: Optional[httpx.AsyncClient] = None
         self._session_initialized = False
         self._request_id = 0
+        self._available_tools: Optional[list[dict[str, Any]]] = None
 
     def _parse_sse_response(self, text: str) -> dict:
         """Parse Server-Sent Events response"""
@@ -145,6 +142,42 @@ class K8sMCPTool(Tool[K8sMCPToolInput, ToolRunOptions, K8sMCPToolOutput]):
 
         self._session_initialized = True
 
+    async def get_available_tools(self) -> list[dict[str, Any]]:
+        """
+        Get list of available tools from MCP Server.
+
+        Returns:
+            List of tool definitions with name, description, and input schema
+        """
+        if self._available_tools is not None:
+            return self._available_tools
+
+        await self._initialize_session()
+
+        client = await self._get_client()
+        self._request_id += 1
+
+        response = await client.post(
+            f"{self.mcp_url}/mcp",
+            json={
+                "jsonrpc": "2.0",
+                "method": "tools/list",
+                "params": {},
+                "id": self._request_id,
+            },
+        )
+
+        if response.status_code != 200:
+            raise ToolError(f"Failed to list tools: {response.text}")
+
+        result = self._parse_sse_response(response.text)
+        if "error" in result:
+            raise ToolError(f"Error listing tools: {result['error']}")
+
+        tools = result.get("result", {}).get("tools", [])
+        self._available_tools = tools
+        return tools
+
     @property
     def input_schema(self) -> type[K8sMCPToolInput]:
         return K8sMCPToolInput
@@ -200,8 +233,7 @@ class K8sMCPTool(Tool[K8sMCPToolInput, ToolRunOptions, K8sMCPToolOutput]):
                     result=K8sMCPToolResult(
                         result=None,
                         success=False,
-                        error=f"MCP Server returned status "
-                        f"{response.status_code}: {response.text}",
+                        error=f"MCP Server returned status " f"{response.status_code}: {response.text}",
                     )
                 )
 

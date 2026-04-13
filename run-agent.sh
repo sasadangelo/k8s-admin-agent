@@ -40,20 +40,9 @@ pkill -f "uv run server" 2>/dev/null || true
 sleep 2
 echo ""
 
-# Set environment variables for local testing
-# IMPORTANT: Use Mac IP address directly in HOST to avoid host.docker.internal substitution
-# AgentStack SDK replaces localhost/127.0.0.1 with host.docker.internal (line 345 in server.py)
-# Using the actual Mac IP (9.150.161.51) bypasses this substitution
-export MCP_SERVER_URL="http://localhost:8080"
-export HOST="9.150.161.51"
-export PORT="8000"
-export PLATFORM_AUTH__PUBLIC_URL="http://9.150.161.51:8000"
-
 echo "📝 Configuration:"
-echo "   MCP_SERVER_URL: $MCP_SERVER_URL"
-echo "   HOST: $HOST"
-echo "   PORT: $PORT"
-echo "   PLATFORM_AUTH__PUBLIC_URL: $PLATFORM_AUTH__PUBLIC_URL"
+echo "   Server host/port configured in config.yaml"
+echo "   Edit config.yaml to change the host based on your network"
 echo ""
 
 # Install dependencies if needed
